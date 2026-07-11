@@ -1,0 +1,11 @@
+{
+  "name": "sep-x-api-test",
+  "version": "1.0.0",
+  "description": "SEP X API Test Interface",
+  "scripts": {
+    "start": "serve . -p $PORT"
+  },
+  "dependencies": {
+    "serve": "^14.0.0"
+  }
+}
