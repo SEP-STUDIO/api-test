@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEP X · API Tester</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --charcoal: #1a1a1a;
+            --charcoal-light: #2a2a2a;
+            --charcoal-dark: #0d0d0d;
+            --ash: #b0b0b0;
+            --ash-light: #d0d0d0;
+            --ash-dark: #707070;
+            --chartreuse: #d4ff00;
+            --font-cyber: 'Orbitron', monospace;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--charcoal-dark);
+            color: var(--ash-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: 
+                linear-gradient(rgba(212, 255, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 255, 0, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 255, 0, 0.12);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 21px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(212, 255, 0, 0.2), transparent 40%, transparent 60%, rgba(212, 255, 0, 0.08));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(212, 255, 0, 0.06);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--chartreuse);
+            color: var(--charcoal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            font-family: var(--font-cyber);
+            box-shadow: 0 0 30px rgba(212, 255, 0, 0.1);
+        }
+
+        .logo-text {
+            font-family: var(--font-cyber);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ash-light);
+        }
+
+        .logo-text span {
+            color: var(--chartreuse);
+        }
+
+        .logo-text .sub {
+            font-family: var(--font-body);
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--ash-dark);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-family: var(--font-cyber);
+            letter-spacing: 0.5px;
+            background: rgba(212, 255, 0, 0.08);
+            color: var(--chartreuse);
+            border: 1px solid rgba(212, 255, 0, 0.08);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--ash);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: var(--font-cyber);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 255, 0, 0.06);
+            border-radius: 8px;
+            color: var(--ash-light);
+            font-size: 13px;
+            font-family: var(--font-body);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--chartreuse);
+            box-shadow: 0 0 20px rgba(212, 255, 0, 0.04);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--ash-dark);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-cyber);
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--chartreuse);
+            color: var(--charcoal);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 255, 0, 0.15);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--ash);
+            border: 1px solid rgba(212, 255, 0, 0.06);
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(212, 255, 0, 0.15);
+            color: var(--chartreuse);
+        }
+
+        .btn-danger {
+            background: rgba(248, 113, 113, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.1);
+        }
+
+        .btn-danger:hover {
+            background: rgba(248, 113, 113, 0.15);
+        }
+
+        .btn-success {
+            background: rgba(52, 211, 153, 0.08);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.1);
+        }
+
+        .btn-success:hover {
+            background: rgba(52, 211, 153, 0.15);
+        }
+
+        .response-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 255, 0, 0.04);
+            min-height: 100px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--ash-light);
+            position: relative;
+        }
+
+        .response-box.show {
+            display: block;
+        }
+
+        .response-box .header-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(212, 255, 0, 0.04);
+            margin-bottom: 12px;
+            font-family: var(--font-body);
+        }
+
+        .response-box .status-code {
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: var(--font-cyber);
+        }
+
+        .response-box .status-code.ok {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.08);
+        }
+
+        .response-box .status-code.err {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.08);
+        }
+
+        .response-box .status-code.pending {
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.08);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .response-box .response-time {
+            font-size: 11px;
+            color: var(--ash-dark);
+        }
+
+        .response-box .json-output {
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--ash-light);
+        }
+
+        .response-box .json-output .key {
+            color: #60a5fa;
+        }
+        .response-box .json-output .string {
+            color: #34d399;
+        }
+        .response-box .json-output .number {
+            color: #fbbf24;
+        }
+        .response-box .json-output .boolean {
+            color: #f472b6;
+        }
+        .response-box .json-output .null {
+            color: #6b7280;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--charcoal);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .spinner-white {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-top-color: #fff;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .help-text {
+            color: var(--ash-dark);
+            font-size: 11px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+
+        .help-text code {
+            color: var(--chartreuse);
+            background: rgba(212, 255, 0, 0.04);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .help-text i {
+            margin-right: 4px;
+            color: var(--chartreuse);
+            opacity: 0.4;
+        }
+
+        .quick-presets {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .quick-presets button {
+            padding: 4px 12px;
+            border: 1px solid rgba(212, 255, 0, 0.06);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--ash-dark);
+            font-size: 10px;
+            font-family: var(--font-cyber);
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.3px;
+        }
+
+        .quick-presets button:hover {
+            border-color: rgba(212, 255, 0, 0.15);
+            color: var(--chartreuse);
+        }
+
+        .save-indicator {
+            display: none;
+            font-size: 11px;
+            color: var(--chartreuse);
+            margin-left: 8px;
+        }
+
+        .save-indicator.show {
+            display: inline;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 255, 0, 0.15);
+            border-radius: 4px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(212, 255, 0, 0.03);
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--ash-dark);
+            font-family: var(--font-cyber);
+            letter-spacing: 0.3px;
+        }
+
+        .footer .version {
+            color: var(--chartreuse);
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ========== HEADER ========== -->
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">
+                    SEP <span>X</span>
+                    <div class="sub">// API TESTER</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <span class="badge"><i class="fas fa-circle" style="color:#34d399;font-size:6px;margin-right:4px;"></i> LIVE</span>
+                <span class="badge" id="apiStatus">⚡ READY</span>
+            </div>
+        </div>
+
+        <!-- ========== MAIN FORM ========== -->
+        <div class="grid-2">
+
+            <!-- LEFT: Configuration -->
+            <div>
+
+                <!-- API Key -->
+                <div class="form-group">
+                    <label for="apiKeyInput"><i class="fas fa-key" style="color:var(--chartreuse);opacity:0.5;margin-right:4px;"></i> API Key</label>
+                    <div style="display:flex;gap:6px;">
+                        <input type="text" id="apiKeyInput" placeholder="Enter your SEP X API key" style="flex:1;" />
+                        <button class="btn btn-secondary" onclick="saveAPIKey()" style="padding:10px 14px;flex-shrink:0;" title="Save to localStorage">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
+                    <div style="font-size:11px;color:var(--ash-dark);margin-top:4px;">
+                        <span class="save-indicator" id="saveIndicator">✅ Saved to localStorage</span>
+                    </div>
+                </div>
+
+                <!-- Endpoint -->
+                <div class="form-group">
+                    <label for="baseUrlInput"><i class="fas fa-globe" style="color:var(--chartreuse);opacity:0.5;margin-right:4px;"></i> Base URL</label>
+                    <input type="text" id="baseUrlInput" value="https://sep-x.onrender.com" placeholder="https://sep-x.onrender.com" />
+                </div>
+
+                <!-- Endpoint Select -->
+                <div class="form-group">
+                    <label for="endpointSelect"><i class="fas fa-code-branch" style="color:var(--chartreuse);opacity:0.5;margin-right:4px;"></i> Endpoint</label>
+                    <select id="endpointSelect">
+                        <option value="/v1/chat/completions">POST /v1/chat/completions</option>
+                        <option value="/v1/chat/completions/stream">POST /v1/chat/completions/stream</option>
+                        <option value="/api/token/status?user_id=admin">GET /api/token/status</option>
+                        <option value="/api/keys?user_id=admin">GET /api/keys</option>
+                        <option value="/health">GET /health</option>
+                    </select>
+                </div>
+
+                <!-- Custom Endpoint -->
+                <div class="form-group" id="customEndpointGroup" style="display:none;">
+                    <label for="customEndpointInput">Custom Endpoint</label>
+                    <input type="text" id="customEndpointInput" placeholder="/api/your/custom/endpoint" />
+                </div>
+
+            </div>
+
+            <!-- RIGHT: Request Body -->
+            <div>
+
+                <!-- Quick Presets -->
+                <div class="quick-presets">
+                    <button onclick="setPreset('hello')">👋 Hello</button>
+                    <button onclick="setPreset('joke')">😂 Joke</button>
+                    <button onclick="setPreset('trivia')">🧠 Trivia</button>
+                    <button onclick="setPreset('custom')">✏️ Custom</button>
+                </div>
+
+                <!-- Request Body -->
+                <div class="form-group">
+                    <label for="requestBody"><i class="fas fa-code" style="color:var(--chartreuse);opacity:0.5;margin-right:4px;"></i> Request Body (JSON)</label>
+                    <textarea id="requestBody" style="min-height:120px;font-size:12px;">{
+  "prompt": "Hello! Say hello back in one word.",
+  "session_id": "test_session_001",
+  "timeout": 120
+}</textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ========== ACTION BUTTONS ========== -->
+        <div class="btn-group">
+            <button class="btn btn-primary" id="sendBtn" onclick="sendRequest()">
+                <i class="fas fa-paper-plane"></i> Send Request
+            </button>
+            <button class="btn btn-secondary" onclick="clearResponse()">
+                <i class="fas fa-trash-alt"></i> Clear
+            </button>
+            <button class="btn btn-secondary" onclick="loadSavedKey()">
+                <i class="fas fa-undo"></i> Load Saved Key
+            </button>
+            <button class="btn btn-success" onclick="testHealth()">
+                <i class="fas fa-heartbeat"></i> Health Check
+            </button>
+        </div>
+
+        <!-- ========== HELP TEXT ========== -->
+        <div class="help-text">
+            <i class="fas fa-info-circle"></i>
+            Your API key is stored locally in your browser's localStorage.
+            <code>Ctrl+Enter</code> to send &nbsp;·&nbsp; <code>Esc</code> to clear
+        </div>
+
+        <!-- ========== RESPONSE ========== -->
+        <div class="response-box" id="responseBox">
+            <div class="header-line">
+                <span>
+                    <span class="status-code" id="statusCode">200 OK</span>
+                    <span class="response-time" id="responseTime">⏱️ 0.00s</span>
+                </span>
+                <span style="font-size:11px;color:var(--ash-dark);" id="timestamp"></span>
+            </div>
+            <div class="json-output" id="jsonOutput"></div>
+        </div>
+
+        <!-- ========== FOOTER ========== -->
+        <div class="footer">
+            <span class="version">v3.0.0 // API TESTER</span>
+            <span>⚡ SEP X</span>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+        const STORAGE_KEY = 'sepx_api_key';
+        const STORAGE_URL_KEY = 'sepx_base_url';
+
+        const $ = id => document.getElementById(id);
+        const apiKeyInput = $('apiKeyInput');
+        const baseUrlInput = $('baseUrlInput');
+        const endpointSelect = $('endpointSelect');
+        const customEndpointInput = $('customEndpointInput');
+        const requestBody = $('requestBody');
+        const responseBox = $('responseBox');
+        const jsonOutput = $('jsonOutput');
+        const statusCode = $('statusCode');
+        const responseTime = $('responseTime');
+        const timestamp = $('timestamp');
+        const sendBtn = $('sendBtn');
+        const apiStatus = $('apiStatus');
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        const PRESETS = {
+            hello: {
+                body: `{
+  "prompt": "Hello! Say hello back in one word.",
+  "session_id": "test_session_001",
+  "timeout": 120
+}`,
+                endpoint: '/v1/chat/completions'
+            },
+            joke: {
+                body: `{
+  "prompt": "Tell me a short joke.",
+  "session_id": "test_session_002",
+  "timeout": 120
+}`,
+                endpoint: '/v1/chat/completions'
+            },
+            trivia: {
+                body: `{
+  "prompt": "What is the capital of France?",
+  "session_id": "test_session_003",
+  "timeout": 120
+}`,
+                endpoint: '/v1/chat/completions'
+            },
+            custom: {
+                body: `{
+  "prompt": "Your custom prompt here",
+  "session_id": "test_session_custom",
+  "timeout": 120
+}`,
+                endpoint: '/v1/chat/completions'
+            }
+        };
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedKey();
+            loadSavedUrl();
+            
+            // Load saved endpoint
+            const savedEndpoint = localStorage.getItem('sepx_endpoint');
+            if (savedEndpoint) {
+                endpointSelect.value = savedEndpoint;
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+Enter to send
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    sendRequest();
+                }
+                // Escape to clear
+                if (e.key === 'Escape') {
+                    clearResponse();
+                }
+            });
+
+            // Auto-save endpoint selection
+            endpointSelect.addEventListener('change', () => {
+                localStorage.setItem('sepx_endpoint', endpointSelect.value);
+                // Show custom endpoint field if 'custom' is selected
+                // Actually we don't have a custom option, but we'll keep it for flexibility
+            });
+        });
+
+        // ============================================================
+        // API KEY MANAGEMENT
+        // ============================================================
+        function saveAPIKey() {
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                showStatus('⚠️ Please enter an API key first', 'error');
+                return;
+            }
+            localStorage.setItem(STORAGE_KEY, key);
+            const indicator = document.getElementById('saveIndicator');
+            indicator.className = 'save-indicator show';
+            setTimeout(() => {
+                indicator.className = 'save-indicator';
+            }, 3000);
+            showStatus('✅ API key saved to localStorage', 'success');
+        }
+
+        function loadSavedKey() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                apiKeyInput.value = saved;
+                showStatus('✅ Loaded saved API key', 'success');
+            } else {
+                showStatus('ℹ️ No saved API key found', 'info');
+            }
+        }
+
+        function loadSavedUrl() {
+            const saved = localStorage.getItem(STORAGE_URL_KEY);
+            if (saved) {
+                baseUrlInput.value = saved;
+            }
+        }
+
+        // Save URL on change
+        baseUrlInput.addEventListener('change', () => {
+            localStorage.setItem(STORAGE_URL_KEY, baseUrlInput.value.trim());
+        });
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        function setPreset(name) {
+            const preset = PRESETS[name];
+            if (!preset) return;
+
+            requestBody.value = preset.body;
+            endpointSelect.value = preset.endpoint;
+            localStorage.setItem('sepx_endpoint', preset.endpoint);
+
+            showStatus(`✅ Loaded "${name}" preset`, 'success');
+        }
+
+        // ============================================================
+        // SEND REQUEST
+        // ============================================================
+        async function sendRequest() {
+            const apiKey = apiKeyInput.value.trim();
+            const baseUrl = baseUrlInput.value.trim().replace(/\/+$/, '');
+            let endpoint = endpointSelect.value;
+
+            // If endpoint is custom
+            if (endpoint === 'custom') {
+                endpoint = customEndpointInput.value.trim();
+                if (!endpoint) {
+                    showStatus('❌ Please enter a custom endpoint', 'error');
+                    return;
+                }
+            }
+
+            const url = baseUrl + endpoint;
+            const method = endpoint.startsWith('/api/token/status') || 
+                          endpoint.startsWith('/api/keys') || 
+                          endpoint === '/health' ? 'GET' : 'POST';
+
+            if (!apiKey) {
+                showStatus('❌ Please enter your API key', 'error');
+                return;
+            }
+
+            if (!baseUrl) {
+                showStatus('❌ Please enter the base URL', 'error');
+                return;
+            }
+
+            // Validate JSON
+            let bodyData = null;
+            if (method === 'POST') {
+                try {
+                    bodyData = JSON.parse(requestBody.value);
+                } catch (e) {
+                    showStatus('❌ Invalid JSON in request body: ' + e.message, 'error');
+                    return;
+                }
+            }
+
+            // Update UI
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="spinner spinner-white"></span> SENDING...';
+            apiStatus.textContent = '⏳ REQUESTING...';
+            showResponse();
+
+            const startTime = performance.now();
+
+            try {
+                const headers = {
+                    'X-API-Key': apiKey,
+                    'Content-Type': 'application/json'
+                };
+
+                const options = {
+                    method: method,
+                    headers: headers
+                };
+
+                if (method === 'POST' && bodyData) {
+                    options.body = JSON.stringify(bodyData);
+                }
+
+                const response = await fetch(url, options);
+                const endTime = performance.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+                let responseData;
+                const contentType = response.headers.get('content-type') || '';
+
+                if (contentType.includes('application/json')) {
+                    responseData = await response.json();
+                } else {
+                    responseData = await response.text();
+                }
+
+                // Display response
+                displayResponse(response.status, duration, responseData, contentType);
+
+                // Update status
+                if (response.ok) {
+                    apiStatus.textContent = '✅ SUCCESS';
+                    showStatus(`✅ Request successful (${duration}s)`, 'success');
+                } else {
+                    apiStatus.textContent = '❌ FAILED';
+                    showStatus(`❌ Request failed (${response.status})`, 'error');
+                }
+
+            } catch (error) {
+                const endTime = performance.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+                displayResponse(0, duration, {
+                    error: error.message,
+                    stack: error.stack,
+                    suggestion: 'Check your internet connection and the server status.'
+                }, 'application/json');
+
+                apiStatus.textContent = '❌ ERROR';
+                showStatus('❌ Request error: ' + error.message, 'error');
+            }
+
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
+        }
+
+        // ============================================================
+        // HEALTH CHECK
+        // ============================================================
+        async function testHealth() {
+            const baseUrl = baseUrlInput.value.trim().replace(/\/+$/, '');
+            if (!baseUrl) {
+                showStatus('❌ Please enter the base URL', 'error');
+                return;
+            }
+
+            const url = baseUrl + '/health';
+
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="spinner spinner-white"></span> CHECKING...';
+            showResponse();
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch(url);
+                const endTime = performance.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+                const data = await response.json();
+                displayResponse(response.status, duration, data, 'application/json');
+
+                if (response.ok) {
+                    apiStatus.textContent = '✅ ONLINE';
+                    showStatus(`✅ SEP X is online (${duration}s)`, 'success');
+                } else {
+                    apiStatus.textContent = '⚠️ OFFLINE';
+                    showStatus(`⚠️ Server returned ${response.status}`, 'error');
+                }
+
+            } catch (error) {
+                displayResponse(0, '0.00', {
+                    error: error.message,
+                    suggestion: 'Make sure the server is running and the URL is correct.'
+                }, 'application/json');
+                apiStatus.textContent = '❌ OFFLINE';
+                showStatus('❌ Cannot reach server: ' + error.message, 'error');
+            }
+
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
+        }
+
+        // ============================================================
+        // DISPLAY RESPONSE
+        // ============================================================
+        function displayResponse(status, duration, data, contentType) {
+            const isOk = status >= 200 && status < 300;
+
+            statusCode.textContent = status + (isOk ? ' OK' : ' ERROR');
+            statusCode.className = 'status-code ' + (isOk ? 'ok' : 'err');
+
+            if (status === 0) {
+                statusCode.textContent = '❌ ERROR';
+                statusCode.className = 'status-code err';
+            }
+
+            responseTime.textContent = '⏱️ ' + duration + 's';
+
+            const now = new Date();
+            timestamp.textContent = '📅 ' + now.toLocaleString();
+
+            let output = '';
+
+            if (typeof data === 'string') {
+                output = data;
+            } else {
+                output = JSON.stringify(data, null, 2);
+                // Syntax highlighting
+                output = syntaxHighlight(output);
+            }
+
+            jsonOutput.innerHTML = output;
+            responseBox.className = 'response-box show';
+        }
+
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        function clearResponse() {
+            responseBox.className = 'response-box';
+            jsonOutput.textContent = '';
+            statusCode.textContent = '200 OK';
+            statusCode.className = 'status-code ok';
+            responseTime.textContent = '⏱️ 0.00s';
+            timestamp.textContent = '';
+            apiStatus.textContent = '⚡ READY';
+        }
+
+        function showResponse() {
+            responseBox.className = 'response-box show';
+        }
+
+        // ============================================================
+        // STATUS MESSAGES
+        // ============================================================
+        function showStatus(message, type = 'info') {
+            // Simple status display - can be enhanced
+            console.log(`[${type}] ${message}`);
+            
+            // Update the help text as status
+            const helpText = document.querySelector('.help-text');
+            if (helpText) {
+                const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+                helpText.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+                helpText.style.color = type === 'success' ? 'var(--chartreuse)' : type === 'error' ? '#f87171' : 'var(--ash-dark)';
+                setTimeout(() => {
+                    helpText.style.color = 'var(--ash-dark)';
+                    helpText.innerHTML = `<i class="fas fa-info-circle"></i> Your API key is stored locally in your browser's localStorage. <code>Ctrl+Enter</code> to send &nbsp;·&nbsp; <code>Esc</code> to clear`;
+                }, 5000);
+            }
+        }
+
+        // ============================================================
+        // AUTO-LOAD SAVED KEY ON PAGE LOAD
+        // ============================================================
+        // Already handled in DOMContentLoaded
+
+        console.log('⚡ SEP X API Tester loaded');
+        console.log('💡 Press Ctrl+Enter to send');
+        console.log('💡 Press Escape to clear');
+    </script>
+
+</body>
+</html>
